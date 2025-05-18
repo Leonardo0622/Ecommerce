@@ -5,8 +5,9 @@ import styles from '../styles/Perfil.module.css'; // Asegúrate de tener este ar
 
 export default function Perfil() {
   const [perfil, setPerfil] = useState({
-    nombre: '',
+    name: '',
     email: '',
+    newPassword: ''
   });
 
   const [mensaje, setMensaje] = useState('');
@@ -16,7 +17,11 @@ export default function Perfil() {
   useEffect(() => {
     const fetchPerfil = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/users'); // Ruta correcta al backend
+        const res = await fetch('http://localhost:5000/api/auth/profile', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
         const data = await res.json();
         setPerfil(data);
       } catch (error) {
@@ -39,13 +44,22 @@ export default function Perfil() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/users', {
+      const updateData = {
+        name: perfil.name,
+        email: perfil.email
+      };
+      
+      if (perfil.newPassword) {
+        updateData.password = perfil.newPassword;
+      }
+
+      const res = await fetch('http://localhost:5000/api/auth/profile', {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`, // Si usas token JWT
         },
-        body: JSON.stringify(perfil),
+        body: JSON.stringify(updateData),
       });
 
       if (res.ok) {
@@ -69,10 +83,11 @@ export default function Perfil() {
           <label className={styles.label}>Nombre</label>
           <input
             type="text"
-            name="nombre"
-            value={perfil.nombre}
+            name="name"
+            value={perfil.name}
             onChange={handleChange}
             className={styles.input}
+            required
           />
         </div>
         <div className={styles.formGroup}>
@@ -84,6 +99,17 @@ export default function Perfil() {
             onChange={handleChange}
             className={`${styles.input} ${styles.disabled}`}
             disabled
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>Nueva Contraseña (opcional)</label>
+          <input
+            type="password"
+            name="newPassword"
+            value={perfil.newPassword}
+            onChange={handleChange}
+            className={styles.input}
+            placeholder="Dejar en blanco para mantener la actual"
           />
         </div>
         <button type="submit" className={styles.button}>

@@ -13,10 +13,21 @@ const Login = ({setToken}) => {
 
         try {
             const response = await axios.post("http://localhost:5000/api/auth/login", {email, password});
-            const token = response.data.token;
+            const { token, user } = response.data;
+            
+            // Guardar datos en localStorage
+            localStorage.setItem("token", token);
+            localStorage.setItem("userName", user.name);
+            localStorage.setItem("role", user.role);
+            
             setToken(token); // Guardar el token en el estado global
-            localStorage.setItem("token", token); // Guardar el token en el localStorage
-            router.push('/dashboard'); // Redirect to dashboard after successful login
+            
+            // Redirigir según el rol
+            if (user.role === 'admin') {
+                router.push('/dashboard');
+            } else {
+                router.push('/products');
+            }
         } catch (error) {
             setError("Credenciales incorrectas");
         }

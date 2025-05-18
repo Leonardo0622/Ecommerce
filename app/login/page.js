@@ -13,13 +13,15 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', values);
-      const token = response.data.token;
-      const role = response.data.user.role;
+      const { token, user } = response.data;
+      
+      // Guardar datos en localStorage
       localStorage.setItem('token', token);
-      localStorage.setItem('role', role);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      localStorage.setItem('role', user.role);
+      localStorage.setItem('userName', user.name);
+      localStorage.setItem('user', JSON.stringify(user));
       message.success('Inicio de sesión exitoso');
-      if (role === "admin") {
+      if (user.role === "admin") {
         router.push('/dashboard');
       } else {
         router.push('/');

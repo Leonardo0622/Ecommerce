@@ -1,20 +1,48 @@
 'use client';
 
 import Link from 'next/link';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from "../styles/Navbar.module.css";
 import { useCart } from '../../context/CartContext';
-import { usePathname } from 'next/navigation';
-import AdminNavbar from './AdminNavbar'; // Importamos el navbar del admin
+import { usePathname, useRouter } from 'next/navigation';
+import AdminNavbar from './AdminNavbar';
 
 export default function Navbar() {
   const { cart } = useCart();
   const pathname = usePathname();
+  const router = useRouter();
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const name = localStorage.getItem('userName');
+    setIsLoggedIn(!!token);
+    setUserName(name || 'Usuario');
+
+    // Actualizar el nombre cuando cambie en localStorage
+    const handleStorageChange = () => {
+      const updatedName = localStorage.getItem('userName');
+      setUserName(updatedName || 'Usuario');
+      setIsLoggedIn(!!localStorage.getItem('token'));
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const isAdmin = typeof window !== 'undefined' && localStorage.getItem('role') === 'admin';
-
-  // Si es admin y está en rutas de admin, usamos el AdminNavbar
   const isAdminRoute = pathname?.startsWith('/dashboard') || pathname?.startsWith('/manage-users');
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('role');
+    setIsLoggedIn(false);
+    setUserName('');
+    router.push('/login');
+  };
 
   if (isAdmin && isAdminRoute) {
     return <AdminNavbar />;
@@ -38,6 +66,37 @@ export default function Navbar() {
             )}
           </Link>
         </li>
+
+        {isLoggedIn && (
+          <li className={styles.userMenu}>
+            <button 
+              className={styles.userButton}
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              <i className="bi bi-person-circle" />
+              <span style={{ margin: '0 0.5rem' }}>{userName}</span>
+              <i className={`bi bi-chevron-down ${showDropdown ? 'bi-chevron-up' : ''}`} />
+            </button>
+
+            <div className={`${styles.dropdown} ${showDropdown ? styles.show : ''}`}>
+              <Link href="/profile" className={styles.dropdownItem}>
+                <i className="bi bi-person" />
+                Editar Perfil
+              </Link>
+              <div className={styles.dropdownDivider} />
+              <button onClick={handleLogout} className={styles.dropdownItem}>
+                <i className="bi bi-box-arrow-right" />
+                Cerrar Sesión
+              </button>
+            </div>
+          </li>
+        )}
+
+        {!isLoggedIn && (
+          <li>
+            <Link href='/login'>Iniciar Sesión</Link>
+          </li>
+        )}
       </ul>
     </nav>
   );

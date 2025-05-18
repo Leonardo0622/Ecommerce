@@ -20,7 +20,6 @@ const AdminNavbar = () => {
         <li><Link href="/dashboard">Dashboard</Link></li>
         <li><Link href="/manage-users">Gestionar Usuarios</Link></li>
         <li><Link href="/profile">Perfil</Link></li>
-        <li><Link href="/products">Productos</Link></li>
         <li><button className={styles.logoutBtn} onClick={handleLogout}>Cerrar sesión</button></li>
       </ul>
     </nav>
