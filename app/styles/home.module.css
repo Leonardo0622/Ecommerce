@@ -1,0 +1,157 @@
+
+/* Estilos para la sección hero */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.6);
+}
+
+.heroContent {
+  position: absolute;
+  color: white;
+  text-align: center;
+  z-index: 1;
+}
+
+.heroContent h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.heroContent p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  background-color: #00b894;
+  color: white;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #019270;
+}
+
+/* Sección de productos */
+.productsContainer {
+  padding: 3rem 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  background-color: #f8f9fa;
+}
+
+.productsContainer h2 {
+  width: 100%;
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #2d3436;
+}
+
+.product {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 250px;
+}
+
+.product:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+.product img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.product p {
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2d3436;
+}
+
+/* Sección informativa */
+.infoSection {
+  padding: 4rem 2rem;
+  background-color: #f8f9fa;
+}
+
+.infoWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: 0 auto;
+  gap: 2rem;
+}
+
+.infoImage img {
+  max-width: 500px;
+  width: 100%;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.infoText {
+  flex: 1;
+  min-width: 300px;
+}
+
+.infoText h2 {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  color: #2d3436;
+}
+
+.infoText p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #555;
+}
+
+/*Seccion de lla frse motivacionla*/
+.motivationalSection {
+  background-color: #3d3d3d; /* Gris carbón suave */
+  padding: 40px 20px;
+  text-align: center;
+  margin-top: 40px;
+  border-radius: 1rem;
+}
+
+.motivationalText {
+  font-size: 1.8rem;
+  font-weight: bold;
+  font-style: italic;
+  color: #ffffff;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+  
