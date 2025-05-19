@@ -72,7 +72,6 @@ export default function Navbar() {
         <li><Link href='/'>Inicio</Link></li>
         <li><Link href='/products'>Productos</Link></li>
         <li><Link href='/contact'>Contacto</Link></li>
-        <li><Link href='/pasarelas'>Pasarela</Link></li>
 
         <li className={styles.cartContainer}>
           <Link href='/cart' className={styles.cartlink}>
