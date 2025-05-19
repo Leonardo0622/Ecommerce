@@ -50,8 +50,20 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  font-size: 16px;
-  transition: color 0.3s ease;
+  font-size: 1rem;
+}
+
+.profileImage {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  transition: transform 0.2s;
+}
+
+.userButton:hover .profileImage {
+  transform: scale(1.1);
 }
 
 .userButton i {

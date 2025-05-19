@@ -17,6 +17,7 @@ export default function Perfil() {
 
   // Cargar perfil al inicio
   useEffect(() => {
+    console.log('Iniciando fetchPerfil...');
     const fetchPerfil = async () => {
       try {
         const res = await fetch('http://localhost:5000/api/auth/profile', {
@@ -26,8 +27,9 @@ export default function Perfil() {
         });
         if (res.ok) {
           const data = await res.json();
-          setPerfil(data);
           console.log('Profile data received:', data);
+          console.log('Profile image path:', data.profileImage);
+          setPerfil(data);
           
           // Verificar si la imagen existe
           if (data.profileImage) {
@@ -36,8 +38,14 @@ export default function Perfil() {
             
             // Intentar cargar la imagen
             const img = new Image();
-            img.onload = () => console.log('Image loaded successfully');
-            img.onerror = (e) => console.error('Error loading image:', e);
+            img.onload = () => {
+              console.log('Image loaded successfully from:', imgUrl);
+              setImagePreview(imgUrl);
+            };
+            img.onerror = (e) => {
+              console.error('Error loading image:', e);
+              console.error('Failed URL:', imgUrl);
+            };
             img.src = imgUrl;
           }
         }
@@ -142,13 +150,19 @@ export default function Perfil() {
               alt="Profile"
               className={styles.profileImage}
               style={{
-                width: '100%',
-                height: '100%',
+                width: '150px',
+                height: '150px',
                 objectFit: 'cover',
-                borderRadius: '50%'
+                borderRadius: '50%',
+                border: '3px solid #2563eb'
               }}
               onError={(e) => {
-                console.error('Error loading image, falling back to placeholder');
+                console.error('Error loading image, details:', {
+                  src: e.target.src,
+                  naturalWidth: e.target.naturalWidth,
+                  naturalHeight: e.target.naturalHeight,
+                  error: e.error
+                });
                 e.target.src = 'https://via.placeholder.com/150';
               }}
             />

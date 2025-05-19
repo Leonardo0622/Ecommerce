@@ -14,12 +14,29 @@ export default function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [userName, setUserName] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [profileImage, setProfileImage] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const name = localStorage.getItem('userName');
     setIsLoggedIn(!!token);
     setUserName(name || 'Usuario');
+
+    // Cargar la imagen de perfil
+    if (token) {
+      fetch('http://localhost:5000/api/auth/profile', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.profileImage) {
+          setProfileImage(`http://localhost:5000/uploads/${data.profileImage}`);
+        }
+      })
+      .catch(error => console.error('Error fetching profile:', error));
+    }
 
     // Actualizar el nombre cuando cambie en localStorage
     const handleStorageChange = () => {
@@ -41,6 +58,7 @@ export default function Navbar() {
     localStorage.removeItem('role');
     setIsLoggedIn(false);
     setUserName('');
+    setProfileImage('');
     router.push('/login');
   };
 
@@ -73,7 +91,19 @@ export default function Navbar() {
               className={styles.userButton}
               onClick={() => setShowDropdown(!showDropdown)}
             >
-              <i className="bi bi-person-circle" />
+              {profileImage ? (
+                <img
+                  src={profileImage}
+                  alt="Profile"
+                  className={styles.profileImage}
+                  onError={(e) => {
+                    console.error('Error loading profile image');
+                    e.target.src = 'https://via.placeholder.com/32';
+                  }}
+                />
+              ) : (
+                <i className="bi bi-person-circle" />
+              )}
               <span style={{ margin: '0 0.5rem' }}>{userName}</span>
               <i className={`bi bi-chevron-down ${showDropdown ? 'bi-chevron-up' : ''}`} />
             </button>
