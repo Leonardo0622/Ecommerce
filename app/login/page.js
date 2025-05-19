@@ -1,13 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Form, Input, Button, Card, message } from 'antd';
 import axios from 'axios';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
+  const [redirectPath, setRedirectPath] = useState('/');
+
+  useEffect(() => {
+    const redirect = searchParams.get('redirect');
+    if (redirect) {
+      setRedirectPath(redirect);
+    }
+  }, [searchParams]);
 
   const onFinish = async (values) => {
     setLoading(true);
@@ -24,7 +33,7 @@ export default function LoginPage() {
       if (user.role === "admin") {
         router.push('/dashboard');
       } else {
-        router.push('/');
+        router.push(redirectPath);
       }
     } catch (error) {
       message.error('Credenciales incorrectas');

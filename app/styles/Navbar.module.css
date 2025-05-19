@@ -3,7 +3,9 @@
     justify-content: center; 
     align-items: center;   
     background-color: #333;  
-    padding: 10px 0;       
+    padding: 10px 0;
+    position: relative;
+    height: 100%;
   }
   
   .navbar ul {
@@ -16,7 +18,7 @@
     padding: 5px 10px;      
   }
   
-  .navb.cartBadge {
+  .navbar .cartBadge {
   position: absolute;
   top: -8px;
   right: -8px;
@@ -25,6 +27,11 @@
   border-radius: 50%;
   padding: 2px 6px;
   font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
 }
 
 .userMenu {
@@ -59,14 +66,14 @@
   position: absolute;
   top: 100%;
   right: 0;
-  background-color: #fff;
+  background-color: #333;
   border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   min-width: 200px;
-  z-index: 1000;
+  z-index: 1001;
   display: none;
-  margin-top: 0.5rem;
-  border: 1px solid #eee;
+  border: 1px solid #444;
+  padding: 8px 0;
 }
 
 .dropdown.show {
@@ -78,7 +85,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  color: #333;
+  color: white;
   text-decoration: none;
   transition: all 0.3s ease;
   border: none;
@@ -90,13 +97,13 @@
 }
 
 .dropdownItem:hover {
-  background-color: #f8f9fa;
+  background-color: #444;
   color: #ff6347;
 }
 
 .dropdownDivider {
   height: 1px;
-  background-color: #eee;
+  background-color: #444;
   margin: 0.5rem 0;
 }
 

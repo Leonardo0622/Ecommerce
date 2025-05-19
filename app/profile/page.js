@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import styles from '../styles/Perfil.module.css'; // Asegúrate de tener este archivo CSS
+import styles from '../styles/Perfil.module.css';
 
 export default function Perfil() {
   const [perfil, setPerfil] = useState({
     name: '',
     email: '',
-    newPassword: ''
+    newPassword: '',
+    profileImage: ''
   });
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [mensaje, setMensaje] = useState('');
   const [loading, setLoading] = useState(true);
@@ -19,13 +21,28 @@ export default function Perfil() {
       try {
         const res = await fetch('http://localhost:5000/api/auth/profile', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
         });
-        const data = await res.json();
-        setPerfil(data);
+        if (res.ok) {
+          const data = await res.json();
+          setPerfil(data);
+          console.log('Profile data received:', data);
+          
+          // Verificar si la imagen existe
+          if (data.profileImage) {
+            const imgUrl = `http://localhost:5000/uploads/${data.profileImage}`;
+            console.log('Trying to load image from:', imgUrl);
+            
+            // Intentar cargar la imagen
+            const img = new Image();
+            img.onload = () => console.log('Image loaded successfully');
+            img.onerror = (e) => console.error('Error loading image:', e);
+            img.src = imgUrl;
+          }
+        }
       } catch (error) {
-        console.error('Error al cargar perfil:', error);
+        console.error('Error fetching profile:', error);
       } finally {
         setLoading(false);
       }
@@ -35,34 +52,68 @@ export default function Perfil() {
   }, []);
 
   const handleChange = (e) => {
-    setPerfil({
-      ...perfil,
-      [e.target.name]: e.target.value,
-    });
+    if (e.target.name === 'profileImage') {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+        setPerfil({
+          ...perfil,
+          profileImage: file
+        });
+      }
+    } else {
+      setPerfil({
+        ...perfil,
+        [e.target.name]: e.target.value,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updateData = {
-        name: perfil.name,
-        email: perfil.email
-      };
+      console.log('Enviando datos del formulario:', perfil);
+      const formData = new FormData();
+      formData.append('name', perfil.name);
+      formData.append('email', perfil.email);
+      
+      // Debug: Mostrar qué archivo se está enviando
+      if (perfil.profileImage instanceof File) {
+        console.log('Archivo a subir:', {
+          nombre: perfil.profileImage.name,
+          tipo: perfil.profileImage.type,
+          tamaño: perfil.profileImage.size
+        });
+      }
       
       if (perfil.newPassword) {
-        updateData.password = perfil.newPassword;
+        formData.append('password', perfil.newPassword);
+      }
+
+      if (perfil.profileImage instanceof File) {
+        formData.append('profileImage', perfil.profileImage);
+        console.log('Imagen adjuntada al FormData');
       }
 
       const res = await fetch('http://localhost:5000/api/auth/profile', {
         method: 'PUT',
         headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`, // Si usas token JWT
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify(updateData),
+        body: formData,
       });
 
       if (res.ok) {
+        const updatedData = await res.json();
+        console.log('Profile update response:', updatedData); // Debug log
+        setPerfil(prev => ({
+          ...prev,
+          ...updatedData
+        }));
         setMensaje('✅ Perfil actualizado correctamente');
       } else {
         setMensaje('❌ Error al actualizar perfil');
@@ -79,6 +130,49 @@ export default function Perfil() {
     <div className={styles.container}>
       <h1>Mi Perfil</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.imageContainer}>
+          <div className={styles.imageWrapper}>
+            <img
+              src={
+                imagePreview ||
+                (perfil.profileImage
+                  ? `http://localhost:5000/uploads/${perfil.profileImage}`
+                  : 'https://via.placeholder.com/150')
+              }
+              alt="Profile"
+              className={styles.profileImage}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '50%'
+              }}
+              onError={(e) => {
+                console.error('Error loading image, falling back to placeholder');
+                e.target.src = 'https://via.placeholder.com/150';
+              }}
+            />
+          </div>
+          {/* Debug info */}
+          <div style={{ fontSize: '12px', color: '#666' }}>
+            Current image source: {imagePreview ? 'Preview' : perfil.profileImage ? `http://localhost:5000/uploads/${perfil.profileImage}` : 'Placeholder'}
+          </div>
+          {/* Debug info */}
+          <div style={{ fontSize: '12px', color: '#666' }}>
+            Ruta de imagen: {perfil.profileImage ? `http://localhost:5000/uploads/${perfil.profileImage}` : 'No hay imagen'}
+          </div>
+          {/* Debug info */}
+          <div style={{ fontSize: '12px', color: '#666' }}>
+            {perfil.profileImage ? `Image path: ${perfil.profileImage}` : 'No image path'}
+          </div>
+          <input
+            type="file"
+            name="profileImage"
+            onChange={handleChange}
+            accept="image/*"
+            className={styles.fileInput}
+          />
+        </div>
         <div className={styles.formGroup}>
           <label className={styles.label}>Nombre</label>
           <input

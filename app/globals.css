@@ -24,12 +24,13 @@ main {
 /* Estilos para el Navbar */
 header {
   width: 100%;
-  background: #b764648e;
+  background: #20b6278e;
   padding: 15px 0;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
+  height: 60px;
 }
 
 nav {

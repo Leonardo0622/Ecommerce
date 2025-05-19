@@ -8,10 +8,14 @@ export default function Home() {
   const [products, setProducts] = useState([]);
 
 useEffect(() => {
-  fetch("https://fakestoreapi.com/products?limit=10") 
+  fetch("http://localhost:5000/api/products") 
     .then((res) => res.json())
-    .then((data) => setProducts(data))
-    .catch((error) => console.error("Error cargando productos", error));
+    .then((data) => {
+      console.log('Productos cargados:', data);
+      // Tomar solo los primeros 10 productos
+      setProducts(data.slice(0, 8));
+    })
+    .catch((error) => console.error("Error cargando productos:", error));
 }, []);
 
   return (
@@ -35,19 +39,33 @@ useEffect(() => {
 
       {/* Sección de productos de gym */}
       <section className={styles.productsContainer}>
-  <h2>Productos destacados</h2>
-  {products.length === 0 ? (
-    <p>Cargando productos...</p>
-  ) : (
-    products.map((product) => (
-      <div key={product.id} className={styles.product}>
-        <img src={product.image} alt={product.title} />
-        <p className={styles.productTitle}>{product.title}</p>
-        <p className={styles.productDesc}>${product.price}</p>
-      </div>
-    ))
-  )}
-</section>
+        <h2 className={styles.sectionTitle}>Productos destacados</h2>
+        {products.length === 0 ? (
+          <div className={styles.loading}>
+            <div className={styles.spinner}></div>
+            <p>Cargando productos...</p>
+          </div>
+        ) : (
+          <div className={styles.productsGrid}>
+            {products.map((product) => (
+              <div key={product._id} className={styles.product}>
+                <div className={styles.productImageContainer}>
+                  <img 
+                    src={product.image} 
+                    alt={product.name} 
+                    className={styles.productImage}
+                  />
+                </div>
+                <div className={styles.productInfo}>
+                  <h3 className={styles.productTitle}>{product.name}</h3>
+                  <p className={styles.productDesc}>${product.price}</p>
+                  <button className={styles.addToCartBtn}>Agregar al carrito</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
 
       {/* Sección informativa */}
@@ -71,33 +89,53 @@ useEffect(() => {
       </section>
 
       {/* Sección de accesorios para gym */}
-      <section className={styles.productsContainer}>
-        <h2>Accesorios que completan tu estilo</h2>
+      <section className={styles.accessoriesSection}>
+        <h2 className={styles.sectionTitle}>Accesorios que completan tu estilo</h2>
+        <div className={styles.accessoriesGrid}>
+          <div className={styles.accessoryCard}>
+            <div className={styles.accessoryImageContainer}>
+              <img src="/img/gorra.jpg" alt="Gorra deportiva" className={styles.accessoryImage} />
+            </div>
+            <div className={styles.accessoryInfo}>
+              <h3 className={styles.accessoryTitle}>Gorra FitStyle</h3>
+              <p className={styles.accessoryDesc}>Protección y estilo en cada entrenamiento</p>
+              <button className={styles.viewDetailsBtn}>Ver detalles</button>
+            </div>
+          </div>
 
-        <div className={styles.product}>
-          <img src="/img/gorra.jpg" alt="Gorra deportiva" />
-          <p className={styles.productTitle}>Gorra FitStyle</p>
-          <p className={styles.productDesc}>Protección y estilo en cada entrenamiento.</p>
-        </div>
+          <div className={styles.accessoryCard}>
+            <div className={styles.accessoryImageContainer}>
+              <img src="/img/accesorio.jpg" alt="Set de accesorios deportivos" className={styles.accessoryImage} />
+            </div>
+            <div className={styles.accessoryInfo}>
+              <h3 className={styles.accessoryTitle}>PowerPack Pro</h3>
+              <p className={styles.accessoryDesc}>Todo lo que necesitas para entrenar al máximo</p>
+              <button className={styles.viewDetailsBtn}>Ver detalles</button>
+            </div>
+          </div>
 
-        <div className={styles.product}>
-          <img src="/img/accesorio.jpg" alt="Set de accesorios deportivos" />
-          <p className={styles.productTitle}>PowerPack Pro</p>
-          <p className={styles.productDesc}>Todo lo que necesitas para entrenar al máximo.</p>
-        </div>
+          <div className={styles.accessoryCard}>
+            <div className={styles.accessoryImageContainer}>
+              <img src="/img/bolso.jpg" alt="Bolso deportivo" className={styles.accessoryImage} />
+            </div>
+            <div className={styles.accessoryInfo}>
+              <h3 className={styles.accessoryTitle}>Bolso IronCarry</h3>
+              <p className={styles.accessoryDesc}>Diseño resistente y amplio para tus rutinas</p>
+              <button className={styles.viewDetailsBtn}>Ver detalles</button>
+            </div>
+          </div>
 
-        <div className={styles.product}>
-          <img src="/img/bolso.jpg" alt="Bolso deportivo" />
-          <p className={styles.productTitle}>Bolso IronCarry</p>
-          <p className={styles.productDesc}>Diseño resistente y amplio para tus rutinas.</p>
+          <div className={styles.accessoryCard}>
+            <div className={styles.accessoryImageContainer}>
+              <img src="/img/botella.jpg" alt="Botella deportiva" className={styles.accessoryImage} />
+            </div>
+            <div className={styles.accessoryInfo}>
+              <h3 className={styles.accessoryTitle}>Botella SmartHydro</h3>
+              <p className={styles.accessoryDesc}>Hidratación inteligente en cada sesión</p>
+              <button className={styles.viewDetailsBtn}>Ver detalles</button>
+            </div>
+          </div>
         </div>
-
-        <div className={styles.product}>
-          <img src="/img/botella.jpg" alt="Botella deportiva" />
-          <p className={styles.productTitle}>Botella SmartHydro</p>
-          <p className={styles.productDesc}>Hidratación inteligente en cada sesión.</p>
-        </div>
-        
       </section>
 
       {/* Frase motivacional final */}

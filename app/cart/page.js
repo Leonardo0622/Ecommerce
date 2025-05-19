@@ -1,13 +1,21 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import { Button, Card, Container, Row, Col } from "react-bootstrap";
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import MetodosPago from '../components/MetodosPago';
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity } = useCart();
   const [showMetodosPago, setShowMetodosPago] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+  }, []);
 
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -84,8 +92,18 @@ export default function CartPage() {
               <Card.Text>
                 <strong>Total: ${calculateTotal().toFixed(2)}</strong>
               </Card.Text>
-              <Button variant="success" className="w-100" onClick={() => setShowMetodosPago(true)}>
-                Proceder al Pago
+              <Button 
+                variant="success" 
+                className="w-100" 
+                onClick={() => {
+                  if (!isLoggedIn) {
+                    router.push('/login?redirect=/cart');
+                  } else {
+                    setShowMetodosPago(true);
+                  }
+                }}
+              >
+                {isLoggedIn ? 'Proceder al Pago' : 'Iniciar Sesión para Pagar'}
               </Button>
             </Card.Body>
           </Card>
